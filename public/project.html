@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Mobile Web Apps for capturing Image to be processed in OCR">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melihat Cahaya</title>
+
+    <!-- Disable tap highlight on IE -->
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <!-- Web Application Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Melihat Cahaya">
+    <meta name="theme-color" content="#303F9F">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Melihat Cahaya">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
+
+    <!-- Tile icon for Win8 -->
+    <meta name="msapplication-TileColor" content="#3372DF">
+    <meta name="msapplication-navbutton-color" content="#303F9F">
+
+    <!-- Material Design Lite -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
+    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+    <!-- App Styling -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+        <!-- Header section containing logo -->
+        <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+            <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+                <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+                    <h3><i class="material-icons">library_books</i> Melihat Cahaya</h3>
+                </div>
+                <div id="user-container">
+                    <a href="index.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">Home</a>
+                    <div class="mdl-layout-spacer"></div>
+                    <div hidden id="user-pic"></div>
+                    <div hidden id="user-name"></div>
+                    <button hidden id="sign-out" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+                        Sign-out
+                    </button>
+                    <button hidden id="sign-in" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--white">
+                        <i class="material-icons">account_circle</i>Sign-in with Google
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- main content -->
+        <main class="mdl-layout__content">
+            <div>
+                <div class="mdl-spinner mdl-js-spinner is-active"></div>
+                <h1 id="title">Loading&hellip;</h1>
+                <div class="mdl-layout__fab">
+                    <hr />
+                    <!-- Colored FAB button with ripple -->
+                    <button id="scan" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                        <i class="material-icons">add</i>
+                    </button>
+                </div>
+
+                <form method="post" onsubmit="return false;">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+                        <input class="mdl-textfield__input" placeholder="Scan halaman&hellip;" type="text" id="uploadFile" readonly required/>
+                        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file">
+                            <i class="material-icons">camera_enhance</i>
+                            <input id="scanPage" type="file" name="image" accept="image/*" capture required>
+                        </div>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input id="halaman" type="number" name="page" class="mdl-textfield__input" required>
+                        <label class="mdl-textfield__label" for="halaman">No. Halaman</label>
+                    </div>
+                    <br />
+                    <!-- Accent-colored raised button with ripple -->
+                    <button id="uploadScan" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        Upload
+                    </button>
+                </form>
+
+                <h2>Scan Halaman</h2>
+<!--                <div id="scanned"></div>-->
+                <ul id="scanned"></ul>
+            </div>
+            
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div>
+                        <img id="copyImgSrc" src="" />
+                    </div>
+                    <i class="material-icons" onClick="rotate(-90)">rotate_left</i>
+                    <i class="material-icons" onClick="rotate(90)">rotate_right</i>
+                    <div>
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <textarea class="mdl-textfield__input" type="text" rows="3" id="transcript"></textarea>
+                            <label class="mdl-textfield__label" for="sample5">Text lines...</label>
+                        </div>
+                        <br />
+                        <button id="simpanSalinan" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Simpan</button>
+                    </div>
+                </div>
+            </div>
+<!--
+            <div class="mdl-grid">
+                <div class="mdl-cell mdl-cell--12-col">
+                    <img id="copyImgSrc" src="" />
+                </div>
+                <div class="mdl-cell mdl-cell--12-col">
+                    <form method="post" onsubmit="return false;">
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <textarea class="mdl-textfield__input" type="text" rows="3" id="sample5"></textarea>
+                            <label class="mdl-textfield__label" for="sample5">Text lines...</label>
+                        </div>
+                        <br />
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Simpan</button>
+                    </form>
+                </div>
+            </div>
+-->
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyDE23nYirqEh9QkNl1nxFXXvq8qRVuDsIU",
+            authDomain: "melihat-cahaya.firebaseapp.com",
+            //authDomain: "localhost",
+            databaseURL: "https://melihat-cahaya.firebaseio.com",
+            storageBucket: "melihat-cahaya.appspot.com",
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <script src="scripts/main.js"></script>
+    <script type="text/javascript">
+        var isbn;
+        var melihatCahaya;
+        var myModal = document.getElementById('myModal');
+        var scanned = document.getElementById('scanned');
+        var imgSalin = document.getElementById('copyImgSrc');
+        var scanKey;
+        
+        var closeModalBtn = document.getElementsByClassName('close')[0];
+        closeModalBtn.addEventListener('click', function(evt){
+            myModal.style.display = 'none';
+        });
+
+//        var mulaiPenyalinan = function (halaman) {
+//            var imgSrc = document.getElementById('hal-' + halaman);
+//            var imgSalin = document.getElementById('copyImgSrc');
+//
+//            imgSalin.src = imgSrc.src;
+//            
+//            myModal.style.display = 'block';
+//        }
+        
+        var mulaiSalin = function(obj) {
+            imgSalin.src = obj.href;
+            myModal.style.display = 'block';
+            scanKey = obj.id;
+            
+            return false;
+        }
+        
+        var rotate = function(deg) {
+            imgSalin.style.transform = "rotate("+deg+"deg)";
+        }
+        
+//        var displayScan = function (isbn, halaman, imgUrl) {
+//            var card = '<div class="mdl-card">' +
+//                '<div class="mdl-card__title"><h2 class="mdl-card__title-text">Halaman ' + halaman + '</h2></div>' +
+//                '<div class="mdl-card__media"><img id="hal-' + halaman + '" src="' + imgUrl + '"></div>' +
+//                '<div class="mdl-card__actions mdl-card--border"><a onclick="mulaiPenyalinan(' + halaman + ')" data-halaman="' + halaman + '" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Salin</a></div>' +
+//                '</div>';
+//
+//            scanned.insertAdjacentHTML('beforeend', card);
+//        }
+        
+        window.onload = function () {
+            melihatCahaya = new MelihatCahaya();
+
+            var query = location.search;
+            var isbnIdx = query.indexOf("isbn=");
+            isbn = query.substr(isbnIdx + 5, 13);
+
+            var projectDetail = melihatCahaya.getData('projects', {
+                'isbn': isbn
+            }).then(function (snapshot) {
+                snapshot.forEach(function (item) {
+                    document.getElementById('title').textContent = item.child('judul').val();
+                });
+                removeLoadingIndicator();
+            }, function (error) {
+                removeLoadingIndicator();
+                alert(error);
+            });
+
+            showLoadingIndicator('beforebegin', scanned);
+            var scanHalaman = melihatCahaya.getData("scans/" + isbn).then(function (snapshot) {
+                snapshot.forEach(function (item) {
+//                    console.log(item.child('scan').val());
+//                    displayScan(isbn, item.child('halaman').val(), item.child('url').val());
+                    scanned.insertAdjacentHTML('beforeend', '<li><a id="'+item.key+'" onClick="return mulaiSalin(this)" href="'+item.child('url').val()+'">hlm '+item.child('halaman').val()+'</a></li>');
+                });
+
+                removeLoadingIndicator();
+            }, function (error) {
+                removeLoadingIndicator();
+                alert(error);
+            });
+            
+        };
+
+        var uploadScanBtn = document.getElementById('uploadScan');
+        uploadScanBtn.addEventListener('click', function (evt) {
+            var file = document.getElementById('scanPage').files[0];
+            var pageNum = document.getElementById('halaman').value;
+            var fileName = pageNum + ".jpg";
+
+            var scanObj = {
+                'halaman': pageNum,
+                'scan': fileName,
+                'url': null,
+                'text': null
+            };
+
+            melihatCahaya.upload(file, "scans/" + isbn, fileName).then(function (url) {
+                scanObj.url = url;
+
+                melihatCahaya.pushData("scans/" + isbn, scanObj).then(function (key) {
+
+                }, function (error) {
+                    alert(error);
+                });
+            }, function (error) {
+                alert(error);
+            });
+
+        });
+
+        document.getElementById('scanPage').onchange = function () {
+            document.getElementById("uploadFile").value = this.files[0].name;
+        }
+        
+        var simpanSalinanBtn = document.getElementById('simpanSalinan');
+        simpanSalinanBtn.addEventListener('click', function(evt){
+            var transcript = document.getElementById('transcript');
+            melihatCahaya.updateData("scans/" + isbn + "/" + scanKey, {transcript: transcript.value}).then(function(){
+                console.log("XXX update done");
+            });
+        });
+    </script>
+</body>
+
+</html>

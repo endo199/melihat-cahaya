@@ -1,0 +1,7 @@
+{
+  "name": "Melihat Cahaya",
+  "short_name": "Melihat Cahaya",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait"
+}

@@ -1,4 +1,13 @@
 {
-  ".read": true,
-  ".write": true
+  "rules": {
+    "projects": {
+       ".read": true, // everyone can read projects
+       ".write": "auth != null", // only authenticated user can create new project
+       ".indexOn": "isbn"
+    },
+    "scans": {
+       ".read": true, // everyone can read projects
+       ".write": "auth != null" // only authenticated user can create new project
+    }
+  }
 }

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Project: Melihat Cahaya</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <button id="google">SignIn Using Google</button>
+    <p>
+        <span id="user"></span>
+        <a id="googleSignOut" href="#">Sign Out</a>
+    </p>
+    
+    <h1>Take a Picture</h1>
+    <input id="picture" type="file" name="image" accept="image/*" capture>
+    <input type="submit" value="Upload">
+    
+    <p>
+        <a href="#" class="hide">Download Link</a>
+    </p>
+
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyDE23nYirqEh9QkNl1nxFXXvq8qRVuDsIU",
+            authDomain: "melihat-cahaya.firebaseapp.com",
+            //authDomain: "localhost",
+            databaseURL: "https://melihat-cahaya.firebaseio.com",
+            storageBucket: "melihat-cahaya.appspot.com",
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        // Get a reference to the storage service, which is used to create references in your storage bucket
+        var storage = firebase.storage();
+        var storageRef = storage.ref();
+        
+        $('#google').click(function(evt){
+            console.log("SignIn");
+            var provider = new firebase.auth.GoogleAuthProvider();
+            provider.addScope('https://www.googleapis.com/auth/plus.login');
+
+            firebase.auth().signInWithPopup(provider).then(function(result){
+                console.log(result);
+               var token = result.credential.accessToken;
+                var user = result.user;
+                
+                var userTag = $('#user');
+                userTag.html(user.displayName);
+            }).catch(function(error){
+                console.log("XXX error");
+//                console.log(error);
+                alert(error.message);
+            });
+        });
+        
+        $('#googleSignOut').click(function(evt){
+           firebase.auth().signOut() .then(function(){
+           }, function(error){
+               console.log("XXX signout error");
+               console.log(error);
+               alert(error.message);
+           });
+        });
+
+        $('input[type=submit]').click(function (evt) {
+            console.log('XXX upload picture');
+            var file = $('#picture')[0].files[0];
+            console.log(file);
+            
+            var uploadTask = storageRef.child('images/'+file.name).put(file);
+            uploadTask.on('state_changed', function(snapshot) {
+                console.log(snapshot);
+            }, function(error) {
+//                console.log(error);
+                alert(error.message);
+            }, function() {
+                var downloadUrl = uploadTask.snapshot.downloadURL;
+                $('a').attr('href', downloadUrl).show();
+            });
+        });
+    </script>
+</body>
+
+</html>
